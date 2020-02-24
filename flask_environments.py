@@ -18,6 +18,7 @@ from flask import current_app
 class Environments(object):
 
     def __init__(self, app=None, var_name=None, default_env=None):
+        self.config = None
         self.app = app
         self.var_name = var_name or 'FLASK_ENV'
         self.default_env = default_env or 'DEVELOPMENT'
@@ -27,7 +28,7 @@ class Environments(object):
             self.init_app(app)
 
     def init_app(self, app):
-        app.config['ENVIORNMENT'] = self.env
+        app.config['ENVIRONMENT'] = self.env
 
         if app.extensions is None:
             app.extensions = {}
@@ -66,9 +67,11 @@ class Environments(object):
 
         app = self.get_app()
 
-        for key in c.iterkeys():
+        for key in c.keys():
             if key.isupper():
                 app.config[key] = c[key]
 
+        self.config = c
+
     def _possible_names(self):
-        return (self.env, self.env.capitalize(), self.env.lower())
+        return self.env, self.env.capitalize(), self.env.lower()
